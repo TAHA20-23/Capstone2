@@ -47,7 +47,7 @@ public class StudentCourseController {
     @GetMapping("/courses/{studentId}")
     public ResponseEntity<?> getCoursesForStudent(@PathVariable Integer studentId) {
         List<Course> courses = studentCourseService.getCourseByStudentId(studentId);
-        return ResponseEntity.ok(courses);
+        return ResponseEntity.status(200).body(courses);
     }
 
 
