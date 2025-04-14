@@ -34,6 +34,9 @@ public class Instructors {
     @NotNull(message = "EnrollmentDate can't be null")
     private LocalDate enrollmentDate;
 
+    @NotNull(message = "Field can't be null")
+    private String field;
+
     @NotNull(message = "DepartmentId can't be null")
     private Integer departmentId;
 
