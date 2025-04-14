@@ -48,6 +48,7 @@ public class InstructorService {
         olInstructors.setEmail(instructor.getEmail());
         olInstructors.setEnrollmentDate(instructor.getEnrollmentDate());
         olInstructors.setDepartmentId(instructor.getDepartmentId());
+        olInstructors.setField(instructor.getField());
 
         instructorsRepository.save(olInstructors);
         return true;
@@ -62,6 +63,7 @@ public class InstructorService {
         }
         return false;
     }
+
 
 
     //B.14----------------------------------------------------------------------------------------------------
@@ -83,5 +85,11 @@ public class InstructorService {
         }
 
         return result;
+    }
+    //16----------------------------------------------------
+    // Get instructors by their fileds
+
+    public List<Instructors> getInstructorsByField(String field){
+        return instructorsRepository.findInstructorsByField(field);
     }
 }
