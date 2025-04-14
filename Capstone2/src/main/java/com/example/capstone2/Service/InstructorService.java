@@ -1,64 +1,87 @@
-package com.example.capstone2.Controller;
+package com.example.capstone2.Service;
 
-
-import com.example.capstone2.Model.ApiResponse;
+import com.example.capstone2.Model.Course;
+import com.example.capstone2.Model.Department;
 import com.example.capstone2.Model.Instructors;
-import com.example.capstone2.Service.InstructorService;
-import jakarta.validation.Valid;
+import com.example.capstone2.Repository.CourseRepository;
+import com.example.capstone2.Repository.DepartmentRepository;
+import com.example.capstone2.Repository.InstructorsRepository;
+import com.example.capstone2.Repository.SectionRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RestController
+@Service
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/instructor")
-public class InstructorsController {
+public class InstructorService {
 
-    private final InstructorService instructorService;
+    private final InstructorsRepository instructorsRepository;
+    private final DepartmentRepository departmentRepository;
+    private final CourseRepository courseRepository;
 
-    @PostMapping("/add")
-    public ResponseEntity addInstructor(@RequestBody @Valid Instructors instructor, Errors errors) {
-        if (errors.hasErrors()) {
-            return ResponseEntity.status(400).body(errors.getFieldError().getDefaultMessage());
+    public Boolean addInstructor(Instructors instructor){
+
+        Department department= departmentRepository.findDepartmentById(instructor.getDepartmentId());
+
+        if(department!=null){
+
+            instructor.setEnrollmentDate(LocalDate.now());
+            instructorsRepository.save(instructor);
+            return true;
         }
-
-        Boolean isAdded = instructorService.addInstructor(instructor);
-        if (isAdded) {
-            return ResponseEntity.status(200).body(new ApiResponse("Instructor added"));
-        }
-        return ResponseEntity.status(400).body(new ApiResponse("Department ID not found"));
+        return false;
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity updateInstructor(@PathVariable Integer id, @RequestBody @Valid Instructors instructor, Errors errors) {
-        if (errors.hasErrors()) {
-            return ResponseEntity.status(400).body(errors.getFieldError().getDefaultMessage());
+    public Boolean updateInstructor(Instructors instructor, Integer id){
+        Instructors olInstructors = instructorsRepository.findById(id).orElse(null);
+
+        if (olInstructors == null) {
+            return false;
         }
 
-        Boolean isUpdated = instructorService.updateInstructor(instructor, id);
-        if (isUpdated) {
-            return ResponseEntity.status(200).body(new ApiResponse("Instructor updated"));
-        }
-        return ResponseEntity.status(400).body(new ApiResponse("Instructor ID does not exist"));
+        olInstructors.setFullName(instructor.getFullName());
+        olInstructors.setEmail(instructor.getEmail());
+        olInstructors.setEnrollmentDate(instructor.getEnrollmentDate());
+        olInstructors.setDepartmentId(instructor.getDepartmentId());
+
+        instructorsRepository.save(olInstructors);
+        return true;
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity deleteInstructor(@PathVariable Integer id) {
-        Boolean isDeleted = instructorService.deleteInstructor(id);
-        if (isDeleted) {
-            return ResponseEntity.status(200).body(new ApiResponse("Instructor deleted"));
+    public Boolean deleteInstructor(Integer id){
+        Instructors isDelete = instructorsRepository.findInstructorsById(id);
+
+        if (isDelete != null) {
+            instructorsRepository.delete(isDelete);
+            return true;
         }
-        return ResponseEntity.status(400).body(new ApiResponse("Instructor ID does not exist"));
+        return false;
     }
 
-    //14--------------------------------------------------
-    @GetMapping("/with-course-count/{departmentId}")
-    public ResponseEntity getInstructorsWithCourses(@PathVariable Integer departmentId) {
-        List<Map<String, Object>> data = instructorService.getInstructorsWithCourseCountByDepartment(departmentId);
-        return ResponseEntity.ok(data);
+
+    //B.14----------------------------------------------------------------------------------------------------
+    //A function that displays all professors in a specific department, along with the number of subjects (courses) they teach.
+    // This helps in making decisions about whether to increase the number of subjects for the professor or not.
+    public List<Map<String, Object>> getInstructorsWithCourseCountByDepartment(Integer departmentId) {
+        List<Instructors> instructors = instructorsRepository.findInstructorsByDepartmentId(departmentId);
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        for (Instructors instructor : instructors) {
+            List<Course> courses = courseRepository.findCourseByInstructorId(instructor.getId());
+
+            Map<String, Object> entry = new HashMap<>();
+            entry.put("instructorId", instructor.getId());
+            entry.put("name", instructor.getFullName());
+            entry.put("courseCount", courses.size());
+
+            result.add(entry);
+        }
+
+        return result;
     }
 }
