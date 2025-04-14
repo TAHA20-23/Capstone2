@@ -75,7 +75,7 @@ public class GradesController {
     @GetMapping("/details/{studentId}")
     public ResponseEntity<?> getStudentGradesDetails(@PathVariable Integer studentId) {
         List<Map<String, Object>> grades = gradeService.getStudentGradesWithCourseNames(studentId);
-        return ResponseEntity.ok(grades);
+        return ResponseEntity.status(200).body(grades);
     }
 
     @GetMapping("/passed/{studentId}")
