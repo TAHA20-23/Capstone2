@@ -75,7 +75,7 @@ public class SectionsController {
     @GetMapping("/students/{sectionId}")
     public ResponseEntity<?> getStudentsInSection(@PathVariable Integer sectionId) {
         List<Student> students = sectionsService.getStudentsInSection(sectionId);
-        return ResponseEntity.ok(students);
+        return ResponseEntity.status(200).body(students);
     }
 
 
@@ -84,7 +84,7 @@ public class SectionsController {
     @GetMapping("/analyze/{sectionId}")
     public ResponseEntity<?> analyzeSectionPerformance(@PathVariable Integer sectionId) {
         Map<String, Object> result = sectionsService.analyzeStudentPerformance(sectionId);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.status(200).body(result);
     }
 
 
