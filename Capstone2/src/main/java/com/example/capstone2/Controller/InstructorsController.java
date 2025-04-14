@@ -61,4 +61,12 @@ public class InstructorsController {
         List<Map<String, Object>> data = instructorService.getInstructorsWithCourseCountByDepartment(departmentId);
         return ResponseEntity.status(200).body(data);
     }
+
+    //16 ----------------------------------------
+    @GetMapping("/by-field/{field}")
+    public ResponseEntity<?> getInstructorsByField(@PathVariable String field) {
+        List<Instructors> instructors = instructorService.getInstructorsByField(field);
+        return ResponseEntity.status(200).body(instructors);
+    }
+
 }
