@@ -10,6 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/instructor")
@@ -52,4 +55,10 @@ public class InstructorsController {
         return ResponseEntity.status(400).body(new ApiResponse("Instructor ID does not exist"));
     }
 
+    //14--------------------------------------------------
+    @GetMapping("/with-course-count/{departmentId}")
+    public ResponseEntity getInstructorsWithCourses(@PathVariable Integer departmentId) {
+        List<Map<String, Object>> data = instructorService.getInstructorsWithCourseCountByDepartment(departmentId);
+        return ResponseEntity.status(200).body(data);
+    }
 }
