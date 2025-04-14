@@ -14,4 +14,6 @@ public interface InstructorsRepository extends JpaRepository<Instructors, Intege
 
     List<Instructors> findInstructorsByDepartmentId(Integer departmentId);
 
+    List<Instructors> findInstructorsByField(String field);
+
 }
