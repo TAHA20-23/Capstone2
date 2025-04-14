@@ -65,6 +65,6 @@ public class ClassRoomController {
     @GetMapping("/full")
     public ResponseEntity<?> getFullClassRooms() {
         List<ClassRoom> fullRooms = classRoomService.getFullClassRooms();
-        return ResponseEntity.ok(fullRooms);
+        return ResponseEntity.status(200).body(fullRooms);
     }
 }
