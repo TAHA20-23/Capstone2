@@ -72,7 +72,7 @@ public class StudentController {
     @GetMapping("/by-department/{departmentId}")
     public ResponseEntity<?> getStudentsByDepartment(@PathVariable Integer departmentId) {
         List<Student> students = studentService.getSpecificDepartmentStudents(departmentId);
-        return ResponseEntity.ok(students);
+        return ResponseEntity.status(200).body(students);
     }
 
 
